@@ -29,6 +29,138 @@ struct KeyValue : pair<int, string> {
 
 
 /****************************************************************
+class Parser
+
+Parses text based on user defined delimiter and returns parsed
+content through a vector
+
+*****************************************************************/
+class Parser {
+private:
+	string text;
+	const char* delimiter;
+public:
+	vector<int> parse(string t, const char* d);
+	const char* getDelimiter();
+	void setDelimiter(const char*);
+};
+
+vector<int> Parser::parse(string t, const char* d) {
+	vector<int> vlist;
+	text = t;
+	delimiter = d;
+	string temp;
+	// find delimiter in text
+	int start = 0;
+	int index = text.find(*delimiter);
+	while (index != string::npos) {
+		// put value between delimiter into temp
+		temp.assign(text, start, index - start);
+		// push number into vector
+		vlist.push_back(stoi(temp));
+		// find next delimiter
+		start = index + 1;
+		index = text.find(*delimiter, start);
+	}
+	return vlist;
+}
+
+const char* Parser::getDelimiter() {
+	return delimiter;
+}
+
+void Parser::setDelimiter(const char* d) {
+	delimiter = d;
+}
+
+
+
+/****************************************************************
+class File
+
+File class is an object with capability of performing file 
+operations such as read from and write to files. 
+
+*****************************************************************/
+template <typename T>
+class File {
+private:
+	string directory;
+public:
+	File();
+	File(string);
+	string getDirectory();
+	void setDirectory(string);
+	void writeFile();
+	void readFile(vector<int>&, const char*);
+};
+
+template <class T>
+File<T>::File() {
+	directory = "Encrypted.txt";
+}
+
+template <class T>
+File<T>::File(string s) {
+	directory = s;
+}
+
+template <class T>
+string File<T>::getDirectory() {
+	return directory;
+}
+
+template <class T>
+void File<T>::setDirectory(string s) {
+	directory = s;
+}
+
+template <class T>
+void File<T>::writeFile() {
+	ofstream myFile();
+	myFile.open(directory);
+	// open file
+	if (myFile.is_open()) {
+		string text;
+		getline(cin, text);
+		//myFile << text;
+	}
+	else {
+		throw "No File to write to";
+	}
+	myFile.close();
+}
+
+template <class T>
+void File<T>::readFile(vector<int> &list, const char* delimiter) {
+	
+	ifstream myFile;
+	myFile.open(directory);
+	
+	// open file
+	if (!myFile.is_open()) {
+		cout << "file not open" << endl;
+		system("pause");
+	}
+
+	while(!myFile.eof()) {
+		// get text from file
+		string buffer = "";
+		getline(myFile, buffer);
+		// parse text into vector
+		Parser decode;
+		vector<int> newList = decode.parse(buffer, delimiter);
+		// place vector into list passed into function
+		list.insert(list.end(), newList.begin(), newList.end());
+		// clear newList
+		newList.clear();
+	}
+	myFile.close();
+}
+
+
+
+/****************************************************************
 class Dictionary
 
 Vector wrapper Uses vector interface to perform functionality 
